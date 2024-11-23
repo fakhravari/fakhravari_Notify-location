@@ -117,6 +117,17 @@ void main() async {
   await prefs.setInt('timer', 10);
 
   final service = FlutterBackgroundService();
+
+  const AndroidNotificationChannel callChannel = AndroidNotificationChannel(
+      'foreground_service_channel', // channel ID
+      'Foreground Service', // channel name
+      description: 'Service is running',
+      importance: Importance.high);
+
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(callChannel);
+
   var forg = await service.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
