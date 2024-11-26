@@ -1,17 +1,17 @@
-import 'package:fakhravari/DTO/TokenResponse.dart';
+import 'package:fakhravari/DTO/LoginResult.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenService {
-  Future<void> saveTokens(TokenResponse tokenResponse) async {
+  Future<void> saveTokens(LoginDataToken tokenResponse) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', tokenResponse.token);
-    await prefs.setString('tokenExpiresOn', tokenResponse.tokenExpiresOn);
-    await prefs.setString('refreshToken', tokenResponse.refreshToken);
+    await prefs.setString('token', tokenResponse.token!);
+    await prefs.setString('tokenExpiresOn', tokenResponse.tokenExpiresOn!);
+    await prefs.setString('refreshToken', tokenResponse.refreshToken!);
     await prefs.setString(
-        'refreshTokenExpiresOn', tokenResponse.refreshTokenExpiresOn);
+        'refreshTokenExpiresOn', tokenResponse.refreshTokenExpiresOn!);
   }
 
-  Future<TokenResponse?> getTokens() async {
+  Future<LoginDataToken?> getTokens() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     String? tokenExpiresOn = prefs.getString('tokenExpiresOn');
@@ -22,7 +22,7 @@ class TokenService {
         tokenExpiresOn != null &&
         refreshToken != null &&
         refreshTokenExpiresOn != null) {
-      return TokenResponse(
+      return LoginDataToken(
         token: token,
         tokenExpiresOn: tokenExpiresOn,
         refreshToken: refreshToken,

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:fakhravari/ApiService/ApiService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/Pages/RegisterPage.dart';
+import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final userNameController = TextEditingController(text: '3490061098');
+  final userNameController = TextEditingController(text: '09173700916');
   final passwordController = TextEditingController(text: 'p!#^(MHF1');
   final captchaController = TextEditingController();
   final captchaSecretController = TextEditingController();
@@ -37,6 +38,8 @@ class _LoginPageState extends State<LoginPage> {
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
+
+        await Get.off(ServiceControlScreen());
       } else {
         Get.snackbar(
           'خطا',

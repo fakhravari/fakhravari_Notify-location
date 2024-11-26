@@ -3,7 +3,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fakhravari/Config/TokenService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
-import 'package:fakhravari/DTO/TokenResponse.dart';
+import 'package:fakhravari/DTO/LoginResult.dart';
 
 class ApiServiceResult {
   bool status;
@@ -103,7 +103,7 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        var tokenResponse = TokenResponse.fromJson(response.data);
+        var tokenResponse = LoginDataToken.fromJson(response.data);
         await TokenService().saveTokens(tokenResponse);
 
         return true;
@@ -129,8 +129,8 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        var tokenResponse = TokenResponse.fromJson(response.data);
-        await TokenService().saveTokens(tokenResponse);
+        var tokenResponse = LoginResult.fromJson(response.data);
+        await TokenService().saveTokens(tokenResponse.data!);
         return true;
       } else {
         return false;

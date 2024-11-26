@@ -1,10 +1,12 @@
 import 'package:fakhravari/Config/themes.dart';
 import 'package:fakhravari/Pages/SplashScreen.dart';
+import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(ServiceController());
 
   runApp(MyApp());
 }

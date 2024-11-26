@@ -23,9 +23,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final isLoggedIn = await TokenService().getTokens();
 
     if (isLoggedIn != null) {
-      await Get.to(ServiceControlScreen());
+      await Get.off(ServiceControlScreen());
     } else {
-      await Get.to(LoginPage());
+      await Get.off(LoginPage());
     }
   }
 
@@ -34,7 +34,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: Text(
-          'در حال بارگذاری...',
+          'در حال بارگذاری ...',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),

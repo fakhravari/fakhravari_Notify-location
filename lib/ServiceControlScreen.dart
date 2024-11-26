@@ -9,14 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-@pragma('vm:entry-point')
-Future<bool> onIosBackground(ServiceInstance service) async {
-  WidgetsFlutterBinding.ensureInitialized();
-  DartPluginRegistrant.ensureInitialized();
-
-  return true;
-}
-
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 final textTimer = TextEditingController(text: '10').obs;
@@ -25,9 +17,15 @@ Timer? timer;
 class ServiceController extends GetxController {
   var isServiceRunning = false.obs;
 
+  @override
+  void onInit() {
+    checkServiceStatus();
+    super.onInit();
+  }
+
   Future<void> checkServiceStatus() async {
     bool running = await FlutterBackgroundService().isRunning();
-    if (!running) {
+    if (running == false) {
       await FlutterBackgroundService().startService();
       isServiceRunning.value = true;
       Get.snackbar('Service Status', 'Service started');
@@ -37,6 +35,14 @@ class ServiceController extends GetxController {
       Get.snackbar('Service Status', 'Service stopped');
     }
   }
+}
+
+@pragma('vm:entry-point')
+Future<bool> onIosBackground(ServiceInstance service) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+
+  return true;
 }
 
 @pragma('vm:entry-point')
@@ -117,7 +123,6 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
   void load() async {
     final prefs = await SharedPreferences.getInstance();
 
-    var getix = Get.put(ServiceController());
     const androidSettings = AndroidInitializationSettings('ic_launcher');
     await flutterLocalNotificationsPlugin
         .initialize(const InitializationSettings(android: androidSettings));
@@ -154,8 +159,10 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
       ),
     );
 
+    textTimer.value.text = (prefs.getInt('timer') ?? 10).toString();
+
     if (forg) {
-      getix.isServiceRunning.value =
+      Get.find<ServiceController>().isServiceRunning.value =
           await FlutterBackgroundService().isRunning();
     }
   }
@@ -168,13 +175,6 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferences.getInstance().then(
-      (value) {
-        textTimer.value.text = (value.getInt('timer') ?? 10).toString();
-      },
-    );
-    final serviceController = Get.find<ServiceController>();
-
     return Scaffold(
       appBar: AppBar(title: const Text('Service Control')),
       body: Center(
@@ -194,15 +194,16 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
             ),
             Obx(() => ElevatedButton(
                   onPressed: () async =>
-                      await serviceController.checkServiceStatus(),
-                  child: Text(serviceController.isServiceRunning.value
-                      ? 'فعال است'
-                      : 'غیر فعال است'),
+                      await Get.find<ServiceController>().checkServiceStatus(),
+                  child: Text(
+                      Get.find<ServiceController>().isServiceRunning.value
+                          ? 'فعال است'
+                          : 'غیر فعال است'),
                 )),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async => await requestPermissions(context),
-              child: const Text('Request Permissions'),
+              child: const Text('بررسی دسترسی'),
             ),
           ],
         ),
