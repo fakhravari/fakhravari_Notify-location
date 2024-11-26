@@ -14,8 +14,14 @@ class ApiServiceResult {
 }
 
 class ApiService {
-  var dio = Dio()
-    ..interceptors.add(InterceptorsWrapper(
+  var dio = Dio(
+    BaseOptions(
+      headers: {
+        'accept': '*/*',
+        'Content-Type': 'application/json',
+      },
+    ),
+  )..interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         final token = await TokenService().getTokens();
         if (token != null) {
@@ -70,9 +76,7 @@ class ApiService {
 
   Future<CaptchaResponse> fetchCaptcha() async {
     final response = await dio.get(
-      'https://attendance-api.pishroatieh.com/api/users/generate-captcha',
-      options: Options(headers: {'accept': '*/*'}),
-    );
+        'https://attendance-api.pishroatieh.com/api/users/generate-captcha');
 
     if (response.statusCode == 200) {
       return CaptchaResponse.fromJson(response.data);
@@ -98,12 +102,6 @@ class ApiService {
       final response = await dio.post(
         'https://attendance-api.pishroatieh.com/api/users/register',
         data: data,
-        options: Options(
-          headers: {
-            'accept': '*/*',
-            'Content-Type': 'application/json',
-          },
-        ),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
@@ -124,12 +122,6 @@ class ApiService {
       final response = await dio.post(
         'https://attendance-api.pishroatieh.com/api/users/login',
         data: data,
-        options: Options(
-          headers: {
-            'accept': '*/*',
-            'Content-Type': 'application/json',
-          },
-        ),
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
