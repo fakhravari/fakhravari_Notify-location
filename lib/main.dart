@@ -3,9 +3,16 @@ import 'package:fakhravari/Pages/SplashScreen.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final prefs = await SharedPreferences.getInstance();
+  if (prefs.getInt('timer') == null) {
+    await prefs.setInt('timer', 15);
+  }
+
   Get.put(ServiceController());
 
   runApp(MyApp());

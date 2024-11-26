@@ -6,6 +6,7 @@ import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/Pages/RegisterPage.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class LoginPage extends StatefulWidget {
@@ -128,6 +129,10 @@ class _LoginPageState extends State<LoginPage> {
                       SizedBox(height: 20),
                       TextFormField(
                         controller: captchaController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
                         decoration: InputDecoration(
                           labelText: 'کپچا',
                           border: OutlineInputBorder(),

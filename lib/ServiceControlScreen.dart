@@ -133,8 +133,6 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
     await flutterLocalNotificationsPlugin
         .initialize(const InitializationSettings(android: androidSettings));
 
-    await prefs.setInt('timer', 10);
-
     final service = FlutterBackgroundService();
     const AndroidNotificationChannel callChannel = AndroidNotificationChannel(
         'foreground_service_channel', // channel ID
@@ -165,7 +163,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
       ),
     );
 
-    textTimer.value.text = (prefs.getInt('timer') ?? 10).toString();
+    textTimer.value.text = (prefs.getInt('timer')).toString();
 
     if (forg) {
       Get.find<ServiceController>().isServiceRunning.value =
@@ -184,7 +182,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Service Control'), actions: [
         IconButton(
-          icon: Icon(Icons.exit_to_app),
+          icon: Icon(Icons.power_settings_new),
           onPressed: () {
             SystemNavigator.pop();
           },
