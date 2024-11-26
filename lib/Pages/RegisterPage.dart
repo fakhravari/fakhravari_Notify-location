@@ -26,8 +26,14 @@ class _RegistrationFormState extends State<RegisterPage> {
   final captchaController = TextEditingController();
   final captchaSecretController = TextEditingController();
 
+  bool isLoading = false;
+
   void submitForm() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+
       final formData = {
         "firstName": firstNameController.text,
         "lastName": lastNameController.text,
@@ -41,6 +47,11 @@ class _RegistrationFormState extends State<RegisterPage> {
       };
 
       var result = await ApiService().registerUser(formData);
+
+      setState(() {
+        isLoading = false;
+      });
+
       if (result) {
         Get.snackbar(
           'موفق',
@@ -205,6 +216,10 @@ class _RegistrationFormState extends State<RegisterPage> {
                                     if (value == null || value.isEmpty) {
                                       return 'لطفاً ایمیل خود را وارد کنید';
                                     }
+                                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                                        .hasMatch(value)) {
+                                      return 'ایمیل معتبر نیست';
+                                    }
                                     return null;
                                   },
                                 ),
@@ -254,8 +269,10 @@ class _RegistrationFormState extends State<RegisterPage> {
                           ),
                           SizedBox(height: 20),
                           ElevatedButton(
-                            onPressed: submitForm,
-                            child: Text('ارسال'),
+                            onPressed: isLoading ? null : submitForm,
+                            child: isLoading
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text('ارسال'),
                           ),
                         ],
                       ),
