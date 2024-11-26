@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class TokenService {
   Future<void> saveTokens(LoginDataToken tokenResponse) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('mobileActive', false);
     await prefs.setString('token', tokenResponse.token!);
     await prefs.setString('tokenExpiresOn', tokenResponse.tokenExpiresOn!);
     await prefs.setString('refreshToken', tokenResponse.refreshToken!);
@@ -13,6 +14,7 @@ class TokenService {
 
   Future<LoginDataToken?> getTokens() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool mobileActive = prefs.getBool('mobileActive') ?? false;
     String? token = prefs.getString('token');
     String? tokenExpiresOn = prefs.getString('tokenExpiresOn');
     String? refreshToken = prefs.getString('refreshToken');
@@ -23,11 +25,11 @@ class TokenService {
         refreshToken != null &&
         refreshTokenExpiresOn != null) {
       return LoginDataToken(
-        token: token,
-        tokenExpiresOn: tokenExpiresOn,
-        refreshToken: refreshToken,
-        refreshTokenExpiresOn: refreshTokenExpiresOn,
-      );
+          token: token,
+          tokenExpiresOn: tokenExpiresOn,
+          refreshToken: refreshToken,
+          refreshTokenExpiresOn: refreshTokenExpiresOn,
+          mobileActive: mobileActive);
     }
     return null;
   }

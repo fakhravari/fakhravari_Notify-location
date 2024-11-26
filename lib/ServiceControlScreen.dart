@@ -163,7 +163,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
       ),
     );
 
-    textTimer.value.text = (prefs.getInt('timer')).toString();
+    textTimer.value.text = (prefs.getInt('timer') ?? 10).toString();
 
     if (forg) {
       Get.find<ServiceController>().isServiceRunning.value =

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:fakhravari/ApiService/ApiService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -18,7 +19,7 @@ class _RegistrationFormState extends State<RegisterPage> {
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final nationalCodeController = TextEditingController();
-  final birthDateController = TextEditingController();
+  final birthDateController = TextEditingController(text: '1990-07-25');
   final phoneNumberController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -135,6 +136,10 @@ class _RegistrationFormState extends State<RegisterPage> {
                             children: [
                               Expanded(
                                 child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   controller: nationalCodeController,
                                   decoration: InputDecoration(
                                     labelText: 'کد ملی',
@@ -172,6 +177,10 @@ class _RegistrationFormState extends State<RegisterPage> {
                               Expanded(
                                 child: TextFormField(
                                   controller: phoneNumberController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly
+                                  ],
                                   decoration: InputDecoration(
                                     labelText: 'شماره تلفن',
                                     border: OutlineInputBorder(),
@@ -228,6 +237,10 @@ class _RegistrationFormState extends State<RegisterPage> {
                           SizedBox(height: 20),
                           TextFormField(
                             controller: captchaController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             decoration: InputDecoration(
                               labelText: 'کپچا',
                               border: OutlineInputBorder(),

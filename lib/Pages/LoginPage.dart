@@ -23,8 +23,6 @@ class _LoginPageState extends State<LoginPage> {
   final captchaSecretController = TextEditingController();
 
   void login() async {
-    var data = await Tools.DeviceInfo();
-
     if (_formKey.currentState!.validate()) {
       final data = {
         "userName": userNameController.text,

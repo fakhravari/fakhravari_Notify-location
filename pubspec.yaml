@@ -21,6 +21,7 @@ dependencies:
   flutter_local_notifications: ^17.2.4
   get: ^4.6.6
   device_info_plus: ^11.1.1
+  unique_identifier: ^0.4.0
 
 dev_dependencies:
   flutter_test:

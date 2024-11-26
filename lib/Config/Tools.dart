@@ -1,34 +1,47 @@
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io' show Platform;
+import 'package:unique_identifier/unique_identifier.dart';
 
 class Tools {
+  static Future<String?> UniqueIdentifierState() async {
+    String? identifier;
+    try {
+      identifier = await UniqueIdentifier.serial;
+      return identifier;
+    } catch (e) {
+      return identifier;
+    }
+  }
+
   static Future<Map<String, String>> DeviceInfo() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    var deviceData;
+    final deviceInfo = DeviceInfoPlugin();
+    final Map<String, String> deviceData = {};
+
     try {
       if (Platform.isAndroid) {
-
-
-        AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-        deviceData = {
-          'model': androidInfo.model.toString(),
+        final androidInfo = await deviceInfo.androidInfo;
+        deviceData.addAll({
+          'model': androidInfo.model ?? 'Unknown',
           'isPhysicalDevice': androidInfo.isPhysicalDevice.toString(),
           'systemName': 'Android',
-          'systemVersion': androidInfo.version.release.toString(),
-        };
+          'systemVersion': androidInfo.version.release ?? 'Unknown',
+          'id': await UniqueIdentifierState() ?? 'Unknown',
+        });
       } else if (Platform.isIOS) {
-        IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-        deviceData = {
-          'model': iosInfo.model,
-          'isPhysicalDevice': iosInfo.isPhysicalDevice,
-          'systemName': iosInfo.systemName,
-          'systemVersion': iosInfo.systemVersion,
-        };
+        final iosInfo = await deviceInfo.iosInfo;
+        deviceData.addAll({
+          'model': iosInfo.model ?? 'Unknown',
+          'isPhysicalDevice': iosInfo.isPhysicalDevice.toString(),
+          'systemName': iosInfo.systemName ?? 'iOS',
+          'systemVersion': iosInfo.systemVersion ?? 'Unknown',
+          'id': await UniqueIdentifierState() ?? 'Unknown',
+        });
       }
-
-      return deviceData;
     } catch (e) {
-      return {};
+      // برای مدیریت خطاها می‌توانید اینجا لاگ اضافه کنید
+      print('Error fetching device info: $e');
     }
+
+    return deviceData;
   }
 }
