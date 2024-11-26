@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:fakhravari/Config/LocationDatabase.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -93,12 +95,16 @@ Future<void> showNotify() async {
 }
 
 Future<void> requestPermissions(BuildContext context) async {
-  final statuses =
-      await [Permission.location, Permission.notification].request();
+  final statuses = await [
+    Permission.location,
+    Permission.notification,
+    Permission.phone
+  ].request();
   final prefs = await SharedPreferences.getInstance();
 
   if (statuses[Permission.location]!.isGranted &&
-      statuses[Permission.notification]!.isGranted) {
+      statuses[Permission.notification]!.isGranted &&
+      statuses[Permission.phone]!.isGranted) {
     await prefs.setBool('isOk', true);
     Get.snackbar('Permissions', 'Permissions granted');
   } else {
@@ -176,7 +182,25 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Service Control')),
+      appBar: AppBar(title: const Text('Service Control'), actions: [
+        IconButton(
+          icon: Icon(Icons.exit_to_app),
+          onPressed: () {
+            SystemNavigator.pop();
+          },
+          tooltip: 'خروج از اپ',
+        ),
+        IconButton(
+          icon: Icon(Icons.logout),
+          onPressed: () async {
+            final SharedPreferences prefs =
+                await SharedPreferences.getInstance();
+            await prefs.clear();
+            exit(0);
+          },
+          tooltip: 'خروج از حساب',
+        ),
+      ]),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

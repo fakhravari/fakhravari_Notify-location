@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:fakhravari/ApiService/ApiService.dart';
+import 'package:fakhravari/Config/Tools.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/Pages/RegisterPage.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
@@ -21,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   final captchaSecretController = TextEditingController();
 
   void login() async {
+    var data = await Tools.DeviceInfo();
+
     if (_formKey.currentState!.validate()) {
       final data = {
         "userName": userNameController.text,
