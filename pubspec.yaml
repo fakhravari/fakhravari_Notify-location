@@ -29,3 +29,11 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
+  fonts:
+    - family: IRANSansX_Regular
+      fonts:
+        - asset: assets/fonts/IRANSansX-Regular.ttf
+    - family: IRANSansX_Medium
+      fonts:
+        - asset: assets/fonts/IRANSansX-Medium.ttf
