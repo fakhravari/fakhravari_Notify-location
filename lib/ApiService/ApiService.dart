@@ -17,6 +17,10 @@ class ApiService {
   var dio = Dio()
     ..interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
+        final token = await TokenService().getTokens();
+        if (token != null) {
+          options.headers["Authorization"] = "Bearer ${token.token}";
+        }
         return handler.next(options);
       },
     ));
