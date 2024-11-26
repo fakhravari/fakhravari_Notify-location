@@ -1,3 +1,4 @@
+import 'package:fakhravari/Config/LightTheme.dart';
 import 'package:fakhravari/Pages/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      theme: lightTheme,
       locale: Locale('fa', 'IR'),
       builder: (context, widget) {
         return Directionality(
@@ -22,10 +24,6 @@ class MyApp extends StatelessWidget {
       },
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
       home: SplashScreen(),
     );
   }
