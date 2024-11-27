@@ -166,9 +166,7 @@ class ApiService {
   }
 
   String handleApiResponse(Map<String, dynamic> data) {
-    // پیام اولیه
     String errorMessage = data['message'] ?? 'خطای نامشخص رخ داده است!';
-
     try {
       // خطاهای منطقی
       if (data['logicalErrors'] != null && data['logicalErrors'] is List) {
@@ -186,9 +184,12 @@ class ApiService {
           data['validationErrors'] is List) {
         List validationErrors = data['validationErrors'];
         if (validationErrors.isNotEmpty) {
-          String validationErrorMessages = validationErrors
-              .map((error) => error['message'] ?? 'خطای اعتبارسنجی نامشخص')
-              .join('\n');
+          String validationErrorMessages = validationErrors.map((error) {
+            String propertyName = error['propertyName'] ?? 'فیلد ناشناس';
+            List messages = error['messages'] ?? [];
+            String combinedMessages = messages.join(', ');
+            return "$propertyName: $combinedMessages";
+          }).join('\n');
           errorMessage += '\n\nخطاهای اعتبارسنجی:\n$validationErrorMessages';
         }
       }
