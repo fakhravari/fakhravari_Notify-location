@@ -16,7 +16,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   final userNameController = TextEditingController(text: '09173700916');
-  final passwordController = TextEditingController(text: 'p!#^(MHF1');
+  final passwordController = TextEditingController(text: '12Fged%67');
   final captchaController = TextEditingController();
   final captchaSecretController = TextEditingController();
 

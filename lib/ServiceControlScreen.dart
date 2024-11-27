@@ -207,17 +207,17 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10),
-              child: Obx(() => TextField(
-                    controller: textTimer.value,
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) async {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setInt('timer', int.tryParse(value) ?? 10);
-                    },
-                  )),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(10),
+            //   child: Obx(() => TextField(
+            //         controller: textTimer.value,
+            //         keyboardType: TextInputType.number,
+            //         onChanged: (value) async {
+            //           final prefs = await SharedPreferences.getInstance();
+            //           await prefs.setInt('timer', int.tryParse(value) ?? 10);
+            //         },
+            //       )),
+            // ),
             Obx(() => ElevatedButton(
                   onPressed: () async =>
                       await Get.find<ServiceController>().checkServiceStatus(),
