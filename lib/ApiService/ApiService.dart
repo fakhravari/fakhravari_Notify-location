@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
 import 'package:fakhravari/Config/TokenService.dart';
+import 'package:fakhravari/Config/Tools.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/DTO/LoginResult.dart';
 import 'package:fakhravari/DTO/ShereModel.dart';
@@ -175,11 +176,16 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         var tokenResponse = LoginResult.fromJson(response.data);
         await TokenService().saveTokens(tokenResponse.data!);
+
+        await Tools.statusLoginTaid(true);
+
         return ModelResult(message: 'موفق', status: true);
       } else {
+        await Tools.statusLoginTaid(false);
         return ModelResult(message: 'خطا', status: false);
       }
     } on DioException catch (e) {
+      await Tools.statusLoginTaid(false);
       var msg = handleApiResponse(e.response!.data);
       return ModelResult(message: msg.message, title: msg.title, status: false);
     }

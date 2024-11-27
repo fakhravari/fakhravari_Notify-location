@@ -156,7 +156,6 @@ class _LoginPageState extends State<LoginPage> {
                         };
 
                         var step2 = await ApiService().Login2(data);
-
                         if (step2.status == true) {
                           Get.snackbar(
                             'موفق',
