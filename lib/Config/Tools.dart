@@ -57,17 +57,6 @@ class Tools {
     }
   }
 
-  static Future<void> statusService(bool chek) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('statusService', chek);
-  }
-
-  static Future<bool> GetstatusService() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    return prefs.getBool('statusService') ?? false;
-  }
-
   static Future<int> GetTimerService() async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -83,5 +72,16 @@ class Tools {
     final prefs = await SharedPreferences.getInstance();
 
     return prefs.getBool('statusLoginTaid') ?? false;
+  }
+
+  static Future<void> isRunning(bool chek) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isRunning', chek);
+  }
+
+  static Future<bool> GetisRunning() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getBool('isRunning') ?? false;
   }
 }

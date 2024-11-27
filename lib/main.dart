@@ -38,9 +38,10 @@ Future<void> OpenDeteils(Uri Url) async {
     if (Idunique != Url.queryParameters['num'].toString()) {
       Idunique = Url.queryParameters['num'].toString();
 
-      Tools.SetTimer(
+      await Tools.SetTimer(
           int.parse((Url.queryParameters['timer'].toString())), false);
-      Tools.statusService(bool.parse(Url.queryParameters['status'].toString()));
+      await Tools.isRunning(
+          bool.parse(Url.queryParameters['status'].toString()));
 
       await Get.offAll(ServiceControlScreen());
     }
@@ -52,7 +53,6 @@ void main() async {
   await initUniLinks();
 
   Tools.SetTimer(10, true);
-  Get.put(ServiceController());
 
   runApp(MyApp());
 }

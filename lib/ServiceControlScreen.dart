@@ -18,32 +18,6 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 final textTimer = TextEditingController(text: '10').obs;
 Timer? timer;
 
-class ServiceController extends GetxController {
-  var isServiceRunning = false.obs;
-
-  @override
-  void onInit() {
-    checkServiceStatus();
-    super.onInit();
-  }
-
-  Future<void> checkServiceStatus() async {
-    final isLoggedIn = await TokenService().getTokens();
-    if (isLoggedIn != null && ((await Tools.GetstatusLoginTaid()) == true)) {
-      bool running = await FlutterBackgroundService().isRunning();
-      if (running == false) {
-        await FlutterBackgroundService().startService();
-        isServiceRunning.value = true;
-        Get.snackbar('وضعیت', 'سرویس شروع شد');
-      } else {
-        FlutterBackgroundService().invoke('stopService');
-        isServiceRunning.value = false;
-        Get.snackbar('وضعیت', 'سرویس متوقف شد');
-      }
-    }
-  }
-}
-
 @pragma('vm:entry-point')
 Future<bool> onIosBackground(ServiceInstance service) async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -88,8 +62,8 @@ Future<void> showNotify() async {
         'foreground_service_channel',
         'Foreground Service',
         channelDescription: 'This is a foreground service',
-        importance: Importance.high,
-        priority: Priority.high,
+        importance: Importance.low,
+        priority: Priority.low,
         ongoing: true,
         playSound: false,
       ),
@@ -116,7 +90,7 @@ Future<void> requestPermissions(BuildContext context) async {
   }
 
   if (await Geolocator.checkPermission() != LocationPermission.always) {
-    Get.snackbar('Geolocator', 'Location permission must be set to always');
+    Get.snackbar('l,rudj l;hkd', 'مجوز مکان باید روی همیشه تنظیم شود');
     openAppSettings();
   }
 }
@@ -141,7 +115,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
         'foreground_service_channel', // channel ID
         'Foreground Service', // channel name
         description: 'Service is running',
-        importance: Importance.high);
+        importance: Importance.low);
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -169,8 +143,8 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
     textTimer.value.text = (prefs.getInt('timer') ?? 10).toString();
 
     if (forg) {
-      Get.find<ServiceController>().isServiceRunning.value =
-          await FlutterBackgroundService().isRunning();
+      var isRun = await FlutterBackgroundService().isRunning();
+      await Tools.isRunning(isRun);
     }
   }
 
@@ -180,8 +154,22 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
     load();
   }
 
+  String TextBtn = '';
+
   @override
   Widget build(BuildContext context) {
+    Tools.GetisRunning().then(
+      (value) {
+        setState(() {
+          if (value) {
+            TextBtn = 'فعال است';
+          } else {
+            TextBtn = 'غیر فعال است';
+          }
+        });
+      },
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text('Service Control'), actions: [
         IconButton(
@@ -206,25 +194,25 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Padding(
-            //   padding: const EdgeInsets.all(10),
-            //   child: Obx(() => TextField(
-            //         controller: textTimer.value,
-            //         keyboardType: TextInputType.number,
-            //         onChanged: (value) async {
-            //           final prefs = await SharedPreferences.getInstance();
-            //           await prefs.setInt('timer', int.tryParse(value) ?? 10);
-            //         },
-            //       )),
-            // ),
-            Obx(() => ElevatedButton(
-                  onPressed: () async =>
-                      await Get.find<ServiceController>().checkServiceStatus(),
-                  child: Text(
-                      Get.find<ServiceController>().isServiceRunning.value
-                          ? 'فعال است'
-                          : 'غیر فعال است'),
-                )),
+            ElevatedButton(
+              onPressed: () async {
+                final isLoggedIn = await TokenService().getTokens();
+                if (isLoggedIn != null &&
+                    ((await Tools.GetstatusLoginTaid()) == true)) {
+                  bool running = await FlutterBackgroundService().isRunning();
+                  if (running == false) {
+                    await FlutterBackgroundService().startService();
+                    Tools.isRunning(true);
+                    Get.snackbar('وضعیت', 'سرویس شروع شد');
+                  } else {
+                    FlutterBackgroundService().invoke('stopService');
+                    Tools.isRunning(false);
+                    Get.snackbar('وضعیت', 'سرویس متوقف شد');
+                  }
+                }
+              },
+              child: Text(TextBtn),
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async => await requestPermissions(context),
