@@ -38,7 +38,10 @@ void onStart(ServiceInstance service) async {
   final sec = await Tools.GetTimerService();
 
   timer = Timer.periodic(Duration(seconds: sec), (_) async {
-    if (await Tools.GetisRunning()) {
+    var taeiMobile = (await Tools.GetstatusLoginTaid());
+    var isRun = (await Tools.GetisRunning());
+
+    if (taeiMobile && isRun) {
       await showNotify();
       await callback();
     }
@@ -65,8 +68,8 @@ Future<void> showNotify() async {
         'foreground_service_channel',
         'Foreground Service',
         channelDescription: 'This is a foreground service',
-        importance: Importance.low,
-        priority: Priority.low,
+        importance: Importance.high,
+        priority: Priority.high,
         ongoing: true,
         playSound: false,
       ),
@@ -116,7 +119,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
         'foreground_service_channel', // channel ID
         'Foreground Service', // channel name
         description: 'Service is running',
-        importance: Importance.low);
+        importance: Importance.high);
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -142,15 +145,19 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
     );
 
     final isLoggedIn = await TokenService().getTokens();
-    if (isLoggedIn != null &&
-        ((await Tools.GetstatusLoginTaid()) == true) &&
-        ((await Tools.GetisRunning()) == true)) {
-      bool running = await FlutterBackgroundService().isRunning();
-      if (running == false) {
+    var taeiMobile = (await Tools.GetstatusLoginTaid());
+    var isRun = (await Tools.GetisRunning());
+    if (isLoggedIn != null && taeiMobile && isRun) {
+      try {
         await FlutterBackgroundService().startService();
-      } else {
-        FlutterBackgroundService().invoke('stopService');
-      }
+      } catch (e) {}
+    } else {
+      try {
+        var isRuning = await FlutterBackgroundService().isRunning();
+        if (isRuning) {
+          FlutterBackgroundService().invoke('stopService');
+        }
+      } catch (e) {}
     }
   }
 

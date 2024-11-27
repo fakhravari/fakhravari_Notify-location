@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 
 final appLinks = AppLinks();
 BuildContext? globalContext;
-String Idunique = '';
 Future<void> initUniLinks() async {
   try {
     appLinks.uriLinkStream.listen((uri) async {
@@ -22,10 +21,11 @@ Future<void> initUniLinks() async {
 }
 
 Future<void> OpenDeteils(Uri Url) async {
-  bool isError = true;
+  bool isError = false;
 
   final isLoggedIn = await TokenService().getTokens();
-  if (isLoggedIn == null || ((await Tools.GetstatusLoginTaid()) == false)) {
+  var taeid = await Tools.GetstatusLoginTaid();
+  if (isLoggedIn == null || (taeid == false)) {
     isError = true;
   }
   if (Url.queryParameters['timer'] == null ||
@@ -35,16 +35,13 @@ Future<void> OpenDeteils(Uri Url) async {
   }
 
   if (isError == false) {
-    if (Idunique != Url.queryParameters['num'].toString()) {
-      Idunique = Url.queryParameters['num'].toString();
+    var timer = int.parse(Url.queryParameters['timer'].toString());
+    var isrun = bool.parse(Url.queryParameters['status'].toString());
 
-      await Tools.SetTimer(
-          int.parse((Url.queryParameters['timer'].toString())), false);
-      await Tools.isRunning(
-          bool.parse(Url.queryParameters['status'].toString()));
+    await Tools.SetTimer(timer, false);
+    await Tools.isRunning(isrun);
 
-      await Get.offAll(ServiceControlScreen());
-    }
+    await Get.offAll(ServiceControlScreen());
   }
 }
 

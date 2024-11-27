@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:fakhravari/ApiService/ApiService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/Pages/RegisterPage.dart';
@@ -7,6 +8,7 @@ import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -123,13 +125,31 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text(''), actions: [
+        IconButton(
+          icon: Icon(Icons.power_settings_new),
+          onPressed: () {
+            SystemNavigator.pop();
+          },
+          tooltip: 'خروج از اپ',
+        ),
+        IconButton(
+          icon: Icon(Icons.logout),
+          onPressed: () async {
+            final SharedPreferences prefs =
+                await SharedPreferences.getInstance();
+            await prefs.clear();
+            exit(0);
+          },
+          tooltip: 'خروج از حساب',
+        ),
+      ]),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 50),
               Center(
                 child: Text(
                   'ورود به حساب کاربری',
