@@ -15,7 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-final textTimer = TextEditingController(text: '10').obs;
+
 Timer? timer;
 
 @pragma('vm:entry-point')
@@ -107,8 +107,6 @@ class ServiceControlScreen extends StatefulWidget {
 
 class _ServiceControlScreenState extends State<ServiceControlScreen> {
   void load() async {
-    final prefs = await SharedPreferences.getInstance();
-
     const androidSettings = AndroidInitializationSettings('ic_launcher');
     await flutterLocalNotificationsPlugin
         .initialize(const InitializationSettings(android: androidSettings));
@@ -143,12 +141,17 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
       ),
     );
 
-    textTimer.value.text = (prefs.getInt('timer') ?? 10).toString();
-
-    // if (forg) {
-    //   var isRun = await FlutterBackgroundService().isRunning();
-    //   await Tools.isRunning(isRun);
-    // }
+    final isLoggedIn = await TokenService().getTokens();
+    if (isLoggedIn != null &&
+        ((await Tools.GetstatusLoginTaid()) == true) &&
+        ((await Tools.GetisRunning()) == true)) {
+      bool running = await FlutterBackgroundService().isRunning();
+      if (running == false) {
+        await FlutterBackgroundService().startService();
+      } else {
+        FlutterBackgroundService().invoke('stopService');
+      }
+    }
   }
 
   @override
