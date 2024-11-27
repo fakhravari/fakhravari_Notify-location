@@ -22,23 +22,28 @@ Future<void> initUniLinks() async {
 }
 
 Future<void> OpenDeteils(Uri Url) async {
+  bool isError = true;
+
   final isLoggedIn = await TokenService().getTokens();
-  if (isLoggedIn != null && isLoggedIn.mobileActive == false) {
-    return;
+  if (isLoggedIn == null || isLoggedIn.mobileActive == false) {
+    isError = true;
   }
   if (Url.queryParameters['timer'] == null ||
       Url.queryParameters['status'] == null ||
       Url.queryParameters['num'] == null) {
-    return;
+    isError = true;
   }
 
-  if (Idunique != Url.queryParameters['num'].toString()) {
-    Idunique = Url.queryParameters['num'].toString();
+  if (isError == false) {
+    if (Idunique != Url.queryParameters['num'].toString()) {
+      Idunique = Url.queryParameters['num'].toString();
 
-    Tools.SetTimer(int.parse((Url.queryParameters['timer'].toString())), false);
-    Tools.statusService(bool.parse(Url.queryParameters['status'].toString()));
+      Tools.SetTimer(
+          int.parse((Url.queryParameters['timer'].toString())), false);
+      Tools.statusService(bool.parse(Url.queryParameters['status'].toString()));
 
-    await Get.offAll(ServiceControlScreen());
+      await Get.offAll(ServiceControlScreen());
+    }
   }
 }
 
