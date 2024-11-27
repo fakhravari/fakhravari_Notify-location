@@ -207,7 +207,7 @@ class _RegistrationFormState extends State<RegisterPage> {
                             colorText: Colors.white,
                           );
 
-                          await Get.offAll(LoginPage());
+                          await Get.offAll(() => LoginPage());
                           timer?.cancel();
                         } else {
                           Get.snackbar(

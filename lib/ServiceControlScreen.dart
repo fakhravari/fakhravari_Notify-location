@@ -149,15 +149,21 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
     var isRun = (await Tools.GetisRunning());
     if (isLoggedIn != null && taeiMobile && isRun) {
       try {
+        await Future.delayed(const Duration(seconds: 2));
         await FlutterBackgroundService().startService();
-      } catch (e) {}
+      } catch (e) {
+        print(e);
+      }
     } else {
       try {
         var isRuning = await FlutterBackgroundService().isRunning();
         if (isRuning) {
+          await Future.delayed(const Duration(seconds: 2));
           FlutterBackgroundService().invoke('stopService');
         }
-      } catch (e) {}
+      } catch (e) {
+        print(e);
+      }
     }
   }
 

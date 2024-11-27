@@ -63,7 +63,7 @@ class _LoginPageState extends State<LoginPage> {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-      await Get.offAll(ServiceControlScreen());
+      await Get.offAll(() => ServiceControlScreen());
     } else {
       Get.snackbar(
         result.title!,

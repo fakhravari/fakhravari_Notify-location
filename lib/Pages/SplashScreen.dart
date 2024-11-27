@@ -24,9 +24,9 @@ class _SplashScreenState extends State<SplashScreen> {
     final isLoggedIn = await TokenService().getTokens();
 
     if (isLoggedIn != null && ((await Tools.GetstatusLoginTaid()) == true)) {
-      await Get.off(ServiceControlScreen());
+      await Get.off(() => ServiceControlScreen());
     } else {
-      await Get.off(LoginPage());
+      await Get.off(() => LoginPage());
     }
   }
 
