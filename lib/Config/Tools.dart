@@ -1,4 +1,5 @@
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io' show Platform;
 import 'package:unique_identifier/unique_identifier.dart';
 
@@ -43,5 +44,16 @@ class Tools {
     }
 
     return deviceData;
+  }
+
+  static Future<void> SetTimer(int timer, bool chek) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (chek) {
+      if (prefs.getInt('timer') == null) {
+        await prefs.setInt('timer', timer);
+      }
+    } else {
+      await prefs.setInt('timer', timer);
+    }
   }
 }
