@@ -96,7 +96,7 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         var token = response.data['data'];
         var tokenResponse = LoginDataToken.fromJson(token);
-        await TokenService().saveTokens(tokenResponse, false);
+        await TokenService().saveTokens(tokenResponse);
 
         return ModelResult(message: 'موفق', status: true);
       } else {
@@ -133,7 +133,7 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         var token = response.data['data'];
         var tokenResponse = LoginDataToken.fromJson(token);
-        await TokenService().saveTokens(tokenResponse, true);
+        await TokenService().saveTokens(tokenResponse);
 
         return ModelResult(message: 'موفق', status: true);
       } else {
@@ -154,7 +154,27 @@ class ApiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         var tokenResponse = LoginResult.fromJson(response.data);
-        await TokenService().saveTokens(tokenResponse.data!, false);
+        await TokenService().saveTokens(tokenResponse.data!);
+        return ModelResult(message: 'موفق', status: true);
+      } else {
+        return ModelResult(message: 'خطا', status: false);
+      }
+    } on DioException catch (e) {
+      var msg = handleApiResponse(e.response!.data);
+      return ModelResult(message: msg.message, title: msg.title, status: false);
+    }
+  }
+
+  Future<ModelResult> Login2(Map<String, String> data) async {
+    try {
+      final response = await dio.post(
+        'https://attendance-api.pishroatieh.com/api/users/two-factor-login-step-2',
+        data: data,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var tokenResponse = LoginResult.fromJson(response.data);
+        await TokenService().saveTokens(tokenResponse.data!);
         return ModelResult(message: 'موفق', status: true);
       } else {
         return ModelResult(message: 'خطا', status: false);

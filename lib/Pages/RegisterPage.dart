@@ -36,15 +36,15 @@ class _RegistrationFormState extends State<RegisterPage> {
       });
 
       final formData = {
-        "firstName": firstNameController.text,
-        "lastName": lastNameController.text,
-        "nationalCode": nationalCodeController.text,
-        "birthDate": birthDateController.text,
-        "phoneNumber": phoneNumberController.text,
-        "email": emailController.text,
-        "password": passwordController.text,
-        "captcha": captchaController.text,
-        "captchaSecret": captchaSecretController.text,
+        "firstName": firstNameController.text.trim(),
+        "lastName": lastNameController.text.trim(),
+        "nationalCode": nationalCodeController.text.trim(),
+        "birthDate": birthDateController.text.trim(),
+        "phoneNumber": phoneNumberController.text.trim(),
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(),
+        "captcha": captchaController.text.trim(),
+        "captchaSecret": captchaSecretController.text.trim(),
       };
 
       var result = await ApiService().registerUser(formData);
@@ -186,6 +186,10 @@ class _RegistrationFormState extends State<RegisterPage> {
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () async {
+                        if (smsController.text.trim().isEmpty) {
+                          return;
+                        }
+
                         var step2 = await ApiService()
                             .registerStep2(smsController.text.trim());
 
