@@ -34,6 +34,7 @@ Future<void> OpenDeteils(Uri Url) async {
     Idunique = Url.queryParameters['num'].toString();
 
     Tools.SetTimer(int.parse((Url.queryParameters['timer'].toString())), false);
+    Tools.statusService(bool.parse(Url.queryParameters['status'].toString()));
 
     await Get.offAll(ServiceControlScreen());
   }

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:fakhravari/Config/LocationDatabase.dart';
 import 'package:fakhravari/Config/TokenService.dart';
+import 'package:fakhravari/Config/Tools.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -28,7 +29,8 @@ class ServiceController extends GetxController {
 
   Future<void> checkServiceStatus() async {
     final isLoggedIn = await TokenService().getTokens();
-    if (isLoggedIn != null && isLoggedIn.mobileActive == true) {
+    var isStart = await Tools.GetstatusService();
+    if (isLoggedIn != null && isLoggedIn.mobileActive == true && isStart) {
       bool running = await FlutterBackgroundService().isRunning();
       if (running == false) {
         await FlutterBackgroundService().startService();
@@ -60,9 +62,7 @@ void onStart(ServiceInstance service) async {
     service.stopSelf();
   });
 
-  final prefs = await SharedPreferences.getInstance();
-  final sec = prefs.getInt('timer') ?? 10;
-
+  final sec = await Tools.GetTimerService();
   timer = Timer.periodic(Duration(seconds: sec), (_) async {
     await showNotify();
     await callback();

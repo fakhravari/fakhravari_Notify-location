@@ -56,4 +56,21 @@ class Tools {
       await prefs.setInt('timer', timer);
     }
   }
+
+  static Future<void> statusService(bool chek) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('statusService', chek);
+  }
+
+  static Future<bool> GetstatusService() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getBool('statusService') ?? false;
+  }
+
+  static Future<int> GetTimerService() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getInt('timer') ?? 10;
+  }
 }
