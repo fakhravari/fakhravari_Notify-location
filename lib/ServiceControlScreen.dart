@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 import 'package:fakhravari/Config/LocationDatabase.dart';
+import 'package:fakhravari/Config/TokenService.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -26,15 +27,18 @@ class ServiceController extends GetxController {
   }
 
   Future<void> checkServiceStatus() async {
-    bool running = await FlutterBackgroundService().isRunning();
-    if (running == false) {
-      await FlutterBackgroundService().startService();
-      isServiceRunning.value = true;
-      Get.snackbar('Service Status', 'Service started');
-    } else {
-      FlutterBackgroundService().invoke('stopService');
-      isServiceRunning.value = false;
-      Get.snackbar('Service Status', 'Service stopped');
+    final isLoggedIn = await TokenService().getTokens();
+    if (isLoggedIn != null && isLoggedIn.mobileActive == true) {
+      bool running = await FlutterBackgroundService().isRunning();
+      if (running == false) {
+        await FlutterBackgroundService().startService();
+        isServiceRunning.value = true;
+        Get.snackbar('وضعیت', 'سرویس شروع شد');
+      } else {
+        FlutterBackgroundService().invoke('stopService');
+        isServiceRunning.value = false;
+        Get.snackbar('وضعیت', 'سرویس متوقف شد');
+      }
     }
   }
 }

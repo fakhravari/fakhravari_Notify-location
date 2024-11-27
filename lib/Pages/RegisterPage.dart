@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:fakhravari/ApiService/ApiService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
+import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -29,15 +30,6 @@ class _RegistrationFormState extends State<RegisterPage> {
   bool isLoading = false;
 
   void submitForm() async {
-    smsController.text = '44662';
-    var step2 = await ApiService().registerStep2(smsController.text.trim());
-    if (step2.status == true) {
-      Get.snackbar('موفق', step2.message!);
-    } else {
-      Get.snackbar('خطا', step2.message!);
-    }
-
-    return;
     if (_formKey.currentState!.validate()) {
       setState(() {
         isLoading = true;
@@ -61,26 +53,32 @@ class _RegistrationFormState extends State<RegisterPage> {
         var step1 = await ApiService().registerStep1();
 
         if (step1.status == true) {
-          if (result.status == true) {
-            Get.snackbar(
-              'موفق',
-              'ثبتنام موفقیت آمیز بود',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-            );
+          Get.snackbar(
+            'موفق',
+            'ثبتنام موفقیت آمیز بود',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
 
-            showDialogWithTimer(context);
-          } else {
-            Get.snackbar(
-              'خطا',
-              'یک خطا رخ داده است',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
-            );
-          }
+          showDialogWithTimer(context);
+        } else {
+          Get.snackbar(
+            'خطا',
+            step1.message!,
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
+      } else {
+        Get.snackbar(
+          'خطا',
+          result.message!,
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
 
       setState(() {
@@ -132,7 +130,6 @@ class _RegistrationFormState extends State<RegisterPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // دکمه بستن در بالای دیالوگ
                     Align(
                       alignment: Alignment.topRight,
                       child: IconButton(
@@ -150,7 +147,6 @@ class _RegistrationFormState extends State<RegisterPage> {
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 20),
-                    // ورودی کد تأیید و دکمه ارسال در یک خط
                     Row(
                       children: [
                         Expanded(
@@ -172,30 +168,47 @@ class _RegistrationFormState extends State<RegisterPage> {
                               ? null
                               : () {
                                   dialogSetState(() {
-                                    isButtonDisabled =
-                                        true; // غیرفعال کردن دکمه
-                                    remainingTime = 120; // تنظیم زمان دوباره
-                                    progressValue = 1.0; // بازنشانی پیشرفت
-                                    formattedTime =
-                                        '02:00'; // بازنشانی فرمت زمان
+                                    isButtonDisabled = true;
+                                    remainingTime = 120;
+                                    progressValue = 1.0;
+                                    formattedTime = '02:00';
                                   });
-                                  startTimer(dialogSetState); // شروع تایمر جدید
+                                  startTimer(dialogSetState);
                                 },
                           child: Text('ارسال'),
                         ),
                       ],
                     ),
                     SizedBox(height: 10),
-                    // نمایش زمان باقی‌مانده
                     if (isButtonDisabled) ...[
                       Text('زمان باقی‌مانده: $formattedTime'),
                     ],
                     SizedBox(height: 20),
-                    // دکمه تأیید کد در زیر دیالوگ
                     ElevatedButton(
                       onPressed: () async {
-                        Navigator.of(context).pop(); // بستن دیالوگ
-                        timer?.cancel(); // توقف تایمر
+                        var step2 = await ApiService()
+                            .registerStep2(smsController.text.trim());
+
+                        if (step2.status == true) {
+                          Get.snackbar(
+                            'موفق',
+                            'ثبتنام موفقیت آمیز بود',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
+                          );
+
+                          await Get.offAll(ServiceControlScreen());
+                          timer?.cancel();
+                        } else {
+                          Get.snackbar(
+                            'خطا',
+                            step2.message!,
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                        }
                       },
                       child: Text('تأیید کد'),
                     ),
