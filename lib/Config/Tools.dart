@@ -39,7 +39,6 @@ class Tools {
         });
       }
     } catch (e) {
-      // برای مدیریت خطاها می‌توانید اینجا لاگ اضافه کنید
       print('Error fetching device info: $e');
     }
 

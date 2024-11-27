@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:fakhravari/ApiService/ApiService.dart';
+import 'package:fakhravari/Config/Tools.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/Pages/LoginPage.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
@@ -36,6 +37,8 @@ class _RegistrationFormState extends State<RegisterPage> {
         isLoading = true;
       });
 
+      var info = await Tools.DeviceInfo();
+
       final formData = {
         "firstName": firstNameController.text.trim(),
         "lastName": lastNameController.text.trim(),
@@ -46,6 +49,7 @@ class _RegistrationFormState extends State<RegisterPage> {
         "password": passwordController.text.trim(),
         "captcha": captchaController.text.trim(),
         "captchaSecret": captchaSecretController.text.trim(),
+        "deviceinfo": jsonEncode(info)
       };
 
       var result = await ApiService().registerUser(formData);
