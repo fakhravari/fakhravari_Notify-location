@@ -5,7 +5,7 @@ import 'package:fakhravari/Pages/SplashScreen.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:uni_links3/uni_links.dart';
 
 BuildContext? globalContext;
 String Idunique = '';
