@@ -207,25 +207,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     final isLoggedIn = await TokenService().getTokens();
-            //     if (isLoggedIn != null &&
-            //         ((await Tools.GetstatusLoginTaid()) == true)) {
-            //       bool running = await FlutterBackgroundService().isRunning();
-            //       if (running == false) {
-            //         await FlutterBackgroundService().startService();
-            //         Tools.isRunning(true);
-            //         Get.snackbar('وضعیت', 'سرویس شروع شد');
-            //       } else {
-            //         FlutterBackgroundService().invoke('stopService');
-            //         Tools.isRunning(false);
-            //         Get.snackbar('وضعیت', 'سرویس متوقف شد');
-            //       }
-            //     }
-            //   },
-            //   child: Text(TextBtn),
-            // ),
+            Text(TextBtn),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async => await requestPermissions(context),
