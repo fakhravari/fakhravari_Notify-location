@@ -34,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
         Get.snackbar(
           'موفق',
           'ورود موفقیت آمیز بود',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
@@ -44,7 +44,7 @@ class _LoginPageState extends State<LoginPage> {
         Get.snackbar(
           'خطا',
           result.message!,
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -114,15 +114,17 @@ class _LoginPageState extends State<LoginPage> {
                           return null;
                         },
                       ),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
                       bytes != null
-                          ? Image.memory(
-                              bytes!,
-                              fit: BoxFit.fill,
-                              width: 100,
+                          ? SizedBox(
+                              width: 250,
+                              child: Image.memory(
+                                bytes!,
+                                fit: BoxFit.fill,
+                              ),
                             )
                           : SizedBox.shrink(),
-                      SizedBox(height: 20),
+                      SizedBox(height: 10),
                       TextFormField(
                         controller: captchaController,
                         keyboardType: TextInputType.number,

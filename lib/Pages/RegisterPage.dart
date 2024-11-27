@@ -56,7 +56,7 @@ class _RegistrationFormState extends State<RegisterPage> {
           Get.snackbar(
             'موفق',
             'ثبتنام موفقیت آمیز بود',
-            snackPosition: SnackPosition.BOTTOM,
+            snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.green,
             colorText: Colors.white,
           );
@@ -66,7 +66,7 @@ class _RegistrationFormState extends State<RegisterPage> {
           Get.snackbar(
             'خطا',
             step1.message!,
-            snackPosition: SnackPosition.BOTTOM,
+            snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
             colorText: Colors.white,
           );
@@ -116,11 +116,11 @@ class _RegistrationFormState extends State<RegisterPage> {
 
     showDialog(
       context: context,
-      barrierDismissible: false, // جلوگیری از بسته شدن دیالوگ
+      barrierDismissible: false,
       builder: (context) {
         return StatefulBuilder(
           builder: (context, dialogSetState) {
-            startTimer(dialogSetState); // شروع تایمر با dialogSetState
+            startTimer(dialogSetState);
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -193,7 +193,7 @@ class _RegistrationFormState extends State<RegisterPage> {
                           Get.snackbar(
                             'موفق',
                             'ثبتنام موفقیت آمیز بود',
-                            snackPosition: SnackPosition.BOTTOM,
+                            snackPosition: SnackPosition.TOP,
                             backgroundColor: Colors.green,
                             colorText: Colors.white,
                           );
@@ -204,7 +204,7 @@ class _RegistrationFormState extends State<RegisterPage> {
                           Get.snackbar(
                             'خطا',
                             step2.message!,
-                            snackPosition: SnackPosition.BOTTOM,
+                            snackPosition: SnackPosition.TOP,
                             backgroundColor: Colors.red,
                             colorText: Colors.white,
                           );
@@ -223,25 +223,23 @@ class _RegistrationFormState extends State<RegisterPage> {
   }
 
   void startTimer(void Function(void Function()) dialogSetState) {
-    // لغو تایمر قبلی (در صورت وجود)
     timer?.cancel();
 
-    // شروع تایمر جدید
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
       if (remainingTime > 0) {
         dialogSetState(() {
           remainingTime--;
-          progressValue = remainingTime / 120; // کاهش مقدار پیشرفت
+          progressValue = remainingTime / 120;
           formattedTime =
               '${(remainingTime ~/ 60).toString().padLeft(2, '0')}:${(remainingTime % 60).toString().padLeft(2, '0')}';
         });
       } else {
-        t.cancel(); // توقف تایمر
+        t.cancel();
         dialogSetState(() {
-          isButtonDisabled = false; // فعال کردن دکمه
-          remainingTime = 120; // بازنشانی زمان
-          progressValue = 1.0; // بازنشانی مقدار پیشرفت
-          formattedTime = '02:00'; // بازنشانی فرمت زمان
+          isButtonDisabled = false;
+          remainingTime = 120;
+          progressValue = 1.0;
+          formattedTime = '02:00';
         });
       }
     });
@@ -403,10 +401,12 @@ class _RegistrationFormState extends State<RegisterPage> {
                           ),
                           SizedBox(height: 20),
                           if (bytes != null)
-                            Image.memory(
-                              bytes!,
-                              fit: BoxFit.fill,
-                              width: double.infinity,
+                            SizedBox(
+                              width: 250,
+                              child: Image.memory(
+                                bytes!,
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           if (bytes == null) Text(''),
                           SizedBox(height: 20),
