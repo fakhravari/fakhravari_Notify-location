@@ -207,7 +207,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(TextBtn),
+            Text('وضعیت سرویس » $TextBtn'),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async => await requestPermissions(context),
