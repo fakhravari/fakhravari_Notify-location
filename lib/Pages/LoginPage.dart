@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:fakhravari/ApiService/ApiService.dart';
+import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -19,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   final captchaSecretController = TextEditingController();
   final smsController = TextEditingController(text: '');
 
-  bool isTimerVisible = false;
+  bool isTimerVisible = true;
   bool isButtonDisabled = false;
   int remainingTime = 120;
   Timer? timer;
@@ -27,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   String formattedTime = '02:00';
 
   void login() async {
-    if (_formKey.currentState!.validate()) {
+    if (true) {
       setState(() {
         isTimerVisible = false;
         startTimer();
@@ -83,6 +85,21 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
+  CaptchaResponse? Captcha;
+  Uint8List? bytes;
+  @override
+  void initState() {
+    super.initState();
+    CaptchaLoad();
+  }
+
+  Future<void> CaptchaLoad() async {
+    Captcha = await ApiService().fetchCaptcha();
+    bytes = base64Decode(Captcha!.captchaImage!);
+    captchaSecretController.text = Captcha!.captchaSecret!;
+    setState(() {});
+  }
+
   @override
   void dispose() {
     userNameController.dispose();
@@ -96,126 +113,177 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('فرم ورود'),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: userNameController,
-                  decoration: InputDecoration(
-                    labelText: 'نام کاربری',
-                    border: OutlineInputBorder(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 50),
+              Center(
+                child: Text(
+                  'ورود به حساب کاربری',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'لطفاً نام کاربری را وارد کنید';
-                    }
-                    return null;
-                  },
                 ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'رمز عبور',
-                    border: OutlineInputBorder(),
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'لطفاً رمز عبور را وارد کنید';
-                    }
-                    return null;
-                  },
+              ),
+              SizedBox(height: 30),
+              Text(
+                'نام کاربری *',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                controller: userNameController,
+                decoration: InputDecoration(
+                  hintText: 'نام کاربری',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person_outline),
                 ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: captchaController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
-                  decoration: InputDecoration(
-                    labelText: 'کپچا',
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'لطفاً کپچا را وارد کنید';
-                    }
-                    return null;
-                  },
+              ),
+              SizedBox(height: 20),
+              Text(
+                'رمز عبور *',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                controller: passwordController,
+                decoration: InputDecoration(
+                  hintText: 'رمز عبور',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock_outline),
                 ),
-                SizedBox(height: 20),
-                if (isTimerVisible) ...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: smsController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          decoration: InputDecoration(
-                            labelText: 'کد تایید',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
+                obscureText: true,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'کد امنیتی *',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextFormField(
+                      controller: captchaController,
+                      decoration: InputDecoration(
+                        hintText: 'کد امنیتی',
+                        border: OutlineInputBorder(),
                       ),
-                      SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: isButtonDisabled
-                            ? null
-                            : () async {
-                                final data = {
-                                  "userName": userNameController.text.trim(),
-                                  "password": passwordController.text.trim(),
-                                  "captcha": captchaController.text.trim(),
-                                  "captchaSecret":
-                                      captchaSecretController.text.trim()
-                                };
-
-                                var result = await ApiService().Login1(data);
-                                if (result.status == true) {
-                                  setState(() {
-                                    isButtonDisabled = false;
-                                    remainingTime = 120;
-                                    progressValue = 1.0;
-                                    formattedTime = '02:00';
-                                    startTimer();
-                                  });
-                                } else {
-                                  Get.snackbar(
-                                    result.title!,
-                                    result.message!,
-                                    snackPosition: SnackPosition.TOP,
-                                    backgroundColor: Colors.red,
-                                    colorText: Colors.white,
-                                  );
-                                }
-                              },
-                        child: Text('ارسال مجدد'),
-                      ),
-                    ],
+                    ),
                   ),
-                  SizedBox(height: 10),
-                  Text('زمان باقی‌مانده: $formattedTime'),
+                  SizedBox(width: 10),
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: SizedBox(
+                        child: (bytes != null)
+                            ? Image.memory(
+                                bytes!,
+                                fit: BoxFit.fill,
+                              )
+                            : Text(''),
+                      ),
+                    ),
+                  ),
                 ],
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: login,
-                  child: Text('ورود'),
+              ),
+              SizedBox(height: 20),
+              Text(
+                'رمز یکبار مصرف *',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: TextField(
+                      controller: smsController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      decoration: InputDecoration(
+                        labelText: 'کد تایید',
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    flex: 1,
+                    child: ElevatedButton(
+                      onPressed: isButtonDisabled
+                          ? null
+                          : () async {
+                              if (userNameController.text.isEmpty) {
+                                Get.snackbar('توجه', 'نام کاربری را وارد کنید');
+                                return;
+                              }
+                              if (passwordController.text.isEmpty) {
+                                Get.snackbar('توجه', 'رمز عبور را وارد کنید');
+                                return;
+                              }
+                              if (captchaController.text.isEmpty) {
+                                Get.snackbar('توجه', 'کد امنیتی را وارد کنید');
+                                return;
+                              }
+
+                              final data = {
+                                "userName": userNameController.text.trim(),
+                                "password": passwordController.text.trim(),
+                                "captcha": captchaController.text.trim(),
+                                "captchaSecret":
+                                    captchaSecretController.text.trim()
+                              };
+
+                              var result = await ApiService().Login1(data);
+                              if (result.status == true) {
+                                setState(() {
+                                  isButtonDisabled = true;
+                                  remainingTime = 120;
+                                  progressValue = 1.0;
+                                  formattedTime = '02:00';
+                                  startTimer();
+                                });
+                              } else {
+                                Get.snackbar(
+                                  result.title!,
+                                  result.message!,
+                                  snackPosition: SnackPosition.TOP,
+                                  backgroundColor: Colors.red,
+                                  colorText: Colors.white,
+                                );
+                              }
+                            },
+                      child: Text('ارسال کد'),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              if (isTimerVisible) Text('زمان باقی‌مانده: $formattedTime'),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: login,
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 50),
                 ),
-              ],
-            ),
+                child: Text('ورود به حساب'),
+              ),
+              SizedBox(height: 10),
+            ],
           ),
         ),
       ),
