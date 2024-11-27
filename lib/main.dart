@@ -1,3 +1,4 @@
+import 'package:app_links/app_links.dart';
 import 'package:fakhravari/Config/TokenService.dart';
 import 'package:fakhravari/Config/Tools.dart';
 import 'package:fakhravari/Config/themes.dart';
@@ -5,17 +6,18 @@ import 'package:fakhravari/Pages/SplashScreen.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:uni_links/uni_links.dart';
 
+final appLinks = AppLinks();
 BuildContext? globalContext;
 String Idunique = '';
 Future<void> initUniLinks() async {
   try {
-    getLinksStream().listen((link) async {
-      link ??= "";
-      var fil = Uri.parse(link.toLowerCase());
+    appLinks.uriLinkStream.listen((uri) async {
+      var fil = Uri.parse(uri.toString().toLowerCase());
       await OpenDeteils(fil);
-    }, onError: (err) {});
+    }, onError: (err) {
+      print(err.toString());
+    });
   } catch (ee) {}
 }
 
