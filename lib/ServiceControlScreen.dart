@@ -81,7 +81,7 @@ Future<void> callback() async {
 Future<void> showNotify() async {
   await flutterLocalNotificationsPlugin.show(
     0,
-    'My App Service',
+    'PishroAtieh',
     'بروز رسانی : ${DateTime.now()}',
     const NotificationDetails(
       android: AndroidNotificationDetails(
@@ -109,9 +109,9 @@ Future<void> requestPermissions(BuildContext context) async {
       statuses[Permission.notification]!.isGranted &&
       statuses[Permission.phone]!.isGranted) {
     await prefs.setBool('isOk', true);
-    Get.snackbar('Permissions', 'Permissions granted');
+    Get.snackbar('دسترسی ها', 'کامل داده شده است');
   } else {
-    Get.snackbar('Permissions', 'Permissions not granted');
+    Get.snackbar('دسترسی ها', 'دسترسی ها ناقص است');
     openAppSettings();
   }
 
