@@ -36,9 +36,12 @@ void onStart(ServiceInstance service) async {
   });
 
   final sec = await Tools.GetTimerService();
+
   timer = Timer.periodic(Duration(seconds: sec), (_) async {
-    await showNotify();
-    await callback();
+    if (await Tools.GetisRunning()) {
+      await showNotify();
+      await callback();
+    }
   });
 }
 
@@ -90,7 +93,7 @@ Future<void> requestPermissions(BuildContext context) async {
   }
 
   if (await Geolocator.checkPermission() != LocationPermission.always) {
-    Get.snackbar('l,rudj l;hkd', 'مجوز مکان باید روی همیشه تنظیم شود');
+    Get.snackbar('مکان', 'مجوز مکان باید روی همیشه تنظیم شود');
     openAppSettings();
   }
 }
@@ -122,7 +125,7 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
             AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(callChannel);
 
-    var forg = await service.configure(
+    await service.configure(
       androidConfiguration: AndroidConfiguration(
         onStart: onStart,
         autoStart: true,
@@ -142,10 +145,10 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
 
     textTimer.value.text = (prefs.getInt('timer') ?? 10).toString();
 
-    if (forg) {
-      var isRun = await FlutterBackgroundService().isRunning();
-      await Tools.isRunning(isRun);
-    }
+    // if (forg) {
+    //   var isRun = await FlutterBackgroundService().isRunning();
+    //   await Tools.isRunning(isRun);
+    // }
   }
 
   @override
@@ -194,25 +197,25 @@ class _ServiceControlScreenState extends State<ServiceControlScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: () async {
-                final isLoggedIn = await TokenService().getTokens();
-                if (isLoggedIn != null &&
-                    ((await Tools.GetstatusLoginTaid()) == true)) {
-                  bool running = await FlutterBackgroundService().isRunning();
-                  if (running == false) {
-                    await FlutterBackgroundService().startService();
-                    Tools.isRunning(true);
-                    Get.snackbar('وضعیت', 'سرویس شروع شد');
-                  } else {
-                    FlutterBackgroundService().invoke('stopService');
-                    Tools.isRunning(false);
-                    Get.snackbar('وضعیت', 'سرویس متوقف شد');
-                  }
-                }
-              },
-              child: Text(TextBtn),
-            ),
+            // ElevatedButton(
+            //   onPressed: () async {
+            //     final isLoggedIn = await TokenService().getTokens();
+            //     if (isLoggedIn != null &&
+            //         ((await Tools.GetstatusLoginTaid()) == true)) {
+            //       bool running = await FlutterBackgroundService().isRunning();
+            //       if (running == false) {
+            //         await FlutterBackgroundService().startService();
+            //         Tools.isRunning(true);
+            //         Get.snackbar('وضعیت', 'سرویس شروع شد');
+            //       } else {
+            //         FlutterBackgroundService().invoke('stopService');
+            //         Tools.isRunning(false);
+            //         Get.snackbar('وضعیت', 'سرویس متوقف شد');
+            //       }
+            //     }
+            //   },
+            //   child: Text(TextBtn),
+            // ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async => await requestPermissions(context),

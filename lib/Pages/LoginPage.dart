@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:fakhravari/ApiService/ApiService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
+import 'package:fakhravari/Pages/RegisterPage.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -291,6 +292,19 @@ class _LoginPageState extends State<LoginPage> {
                 child: Text('ورود به حساب'),
               ),
               SizedBox(height: 10),
+              Divider(),
+              InkWell(
+                child: Text(
+                  "ثبت نام",
+                  style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                      fontSize: 18),
+                ),
+                onTap: () async {
+                  await Get.to(RegisterPage());
+                },
+              )
             ],
           ),
         ),

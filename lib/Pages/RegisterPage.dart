@@ -256,16 +256,16 @@ class _RegistrationFormState extends State<RegisterPage> {
         title: Text('فرم ثبت‌نام'),
       ),
       body: Padding(
-          padding: const EdgeInsets.all(0),
+          padding: const EdgeInsets.all(10),
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   Card(
-                    margin: EdgeInsets.all(2.0),
+                    margin: EdgeInsets.all(0),
                     child: Padding(
-                      padding: const EdgeInsets.all(5.0),
+                      padding: const EdgeInsets.all(10),
                       child: Column(
                         children: [
                           Row(
