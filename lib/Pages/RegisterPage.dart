@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:fakhravari/ApiService/ApiService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
+import 'package:fakhravari/Pages/LoginPage.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -202,7 +203,7 @@ class _RegistrationFormState extends State<RegisterPage> {
                             colorText: Colors.white,
                           );
 
-                          await Get.offAll(ServiceControlScreen());
+                          await Get.offAll(LoginPage());
                           timer?.cancel();
                         } else {
                           Get.snackbar(
