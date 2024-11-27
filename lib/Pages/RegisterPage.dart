@@ -257,7 +257,6 @@ class _RegistrationFormState extends State<RegisterPage> {
             key: _formKey,
             child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Card(
                     margin: EdgeInsets.all(2.0),
