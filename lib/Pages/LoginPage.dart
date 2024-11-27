@@ -137,6 +137,10 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 10),
               TextFormField(
                 controller: userNameController,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
                 decoration: InputDecoration(
                   hintText: 'نام کاربری',
                   border: OutlineInputBorder(),
@@ -170,6 +174,10 @@ class _LoginPageState extends State<LoginPage> {
                     flex: 2,
                     child: TextFormField(
                       controller: captchaController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
                       decoration: InputDecoration(
                         hintText: 'کد امنیتی',
                         border: OutlineInputBorder(),
