@@ -75,7 +75,7 @@ class _RegistrationFormState extends State<RegisterPage> {
         Get.snackbar(
           'خطا',
           result.message!,
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
