@@ -146,26 +146,6 @@ class ApiService {
     }
   }
 
-  Future<ModelResult> Login(Map<String, String> data) async {
-    try {
-      final response = await dio.post(
-        'https://attendance-api.pishroatieh.com/api/users/login',
-        data: data,
-      );
-
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        var tokenResponse = LoginResult.fromJson(response.data);
-        await TokenService().saveTokens(tokenResponse.data!);
-        return ModelResult(message: 'موفق', status: true);
-      } else {
-        return ModelResult(message: 'خطا', status: false);
-      }
-    } on DioException catch (e) {
-      var msg = handleApiResponse(e.response!.data);
-      return ModelResult(message: msg.message, title: msg.title, status: false);
-    }
-  }
-
   Future<ModelResult> Login2(Map<String, String> data) async {
     try {
       final response = await dio.post(
@@ -176,9 +156,7 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         var tokenResponse = LoginResult.fromJson(response.data);
         await TokenService().saveTokens(tokenResponse.data!);
-
         await Tools.statusLoginTaid(true);
-
         return ModelResult(message: 'موفق', status: true);
       } else {
         await Tools.statusLoginTaid(false);
@@ -186,6 +164,24 @@ class ApiService {
       }
     } on DioException catch (e) {
       await Tools.statusLoginTaid(false);
+      var msg = handleApiResponse(e.response!.data);
+      return ModelResult(message: msg.message, title: msg.title, status: false);
+    }
+  }
+
+  Future<ModelResult> Login1(Map<String, String> data) async {
+    try {
+      final response = await dio.post(
+        'https://attendance-api.pishroatieh.com/api/users/two-factor-login-step-1',
+        data: data,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ModelResult(message: 'موفق', status: true);
+      } else {
+        return ModelResult(message: 'خطا', status: false);
+      }
+    } on DioException catch (e) {
       var msg = handleApiResponse(e.response!.data);
       return ModelResult(message: msg.message, title: msg.title, status: false);
     }
