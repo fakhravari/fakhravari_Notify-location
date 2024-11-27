@@ -14,8 +14,6 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-
   final userNameController = TextEditingController(text: '09173700916');
   final passwordController = TextEditingController(text: '12Fged%67');
   final captchaController = TextEditingController();
@@ -30,37 +28,48 @@ class _LoginPageState extends State<LoginPage> {
   String formattedTime = '02:00';
 
   void login() async {
-    if (true) {
-      setState(() {
-        isTimerVisible = false;
-        startTimer();
-      });
+    if (userNameController.text.isEmpty) {
+      Get.snackbar('توجه', 'نام کاربری را وارد کنید');
+      return;
+    }
+    if (passwordController.text.isEmpty) {
+      Get.snackbar('توجه', 'رمز عبور را وارد کنید');
+      return;
+    }
+    if (smsController.text.isEmpty) {
+      Get.snackbar('توجه', 'کد ارسالی را وارد کنید');
+      return;
+    }
 
-      final data = {
-        "userName": userNameController.text.trim(),
-        "password": passwordController.text.trim(),
-        "token": smsController.text.trim(),
-      };
+    setState(() {
+      isTimerVisible = false;
+      startTimer();
+    });
 
-      var result = await ApiService().Login2(data);
-      if (result.status == true) {
-        Get.snackbar(
-          'موفق',
-          'ورود موفقیت آمیز بود',
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-        await Get.offAll(ServiceControlScreen());
-      } else {
-        Get.snackbar(
-          result.title!,
-          result.message!,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
+    final data = {
+      "userName": userNameController.text.trim(),
+      "password": passwordController.text.trim(),
+      "token": smsController.text.trim(),
+    };
+
+    var result = await ApiService().Login2(data);
+    if (result.status == true) {
+      Get.snackbar(
+        'موفق',
+        'ورود موفقیت آمیز بود',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      await Get.offAll(ServiceControlScreen());
+    } else {
+      Get.snackbar(
+        result.title!,
+        result.message!,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     }
   }
 
