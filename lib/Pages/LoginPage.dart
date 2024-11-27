@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:fakhravari/ApiService/ApiService.dart';
-import 'package:fakhravari/Config/Tools.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/Pages/RegisterPage.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
@@ -32,7 +30,7 @@ class _LoginPageState extends State<LoginPage> {
       };
 
       var result = await ApiService().Login(data);
-      if (result) {
+      if (result.status == true) {
         Get.snackbar(
           'موفق',
           'ورود موفقیت آمیز بود',
@@ -45,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
       } else {
         Get.snackbar(
           'خطا',
-          'یک خطا رخ داده است',
+          result.message!,
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,

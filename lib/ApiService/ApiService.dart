@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:fakhravari/Config/TokenService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:fakhravari/DTO/LoginResult.dart';
+import 'package:fakhravari/DTO/ShereModel.dart';
 
 class ApiServiceResult {
   bool status;
@@ -46,7 +47,7 @@ class ApiService {
     }
 
     try {
-      Response response = await dio.post(
+      final response = await dio.post(
           'http://location.pishroatieh.com:5953/Location/create',
           data: jsonEncode);
 
@@ -85,19 +86,7 @@ class ApiService {
     }
   }
 
-  Future<bool> registerUser(Map<String, String> data) async {
-    // final data = {
-    //   "firstName": "محمدحسین",
-    //   "lastName": "فخرآوری",
-    //   "nationalCode": "3490061098",
-    //   "birthDate": "1990-07-25",
-    //   "phoneNumber": "09173700916",
-    //   "email": "fakhravary@gmail.com",
-    //   "password": "1",
-    //   "captcha": "1",
-    //   "captchaSecret": 'captchaSecret',
-    // };
-
+  Future<ModelResult> registerUser(Map<String, String> data) async {
     try {
       final response = await dio.post(
         'https://attendance-api.pishroatieh.com/api/users/register',
@@ -105,19 +94,58 @@ class ApiService {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        var tokenResponse = LoginDataToken.fromJson(response.data);
-        await TokenService().saveTokens(tokenResponse);
+        var token = response.data['data'];
+        var tokenResponse = LoginDataToken.fromJson(token);
+        await TokenService().saveTokens(tokenResponse, false);
 
-        return true;
+        return ModelResult(message: 'موفق', status: true);
       } else {
-        return false;
+        return ModelResult(message: 'خطا', status: false);
       }
-    } catch (e) {
-      return false;
+    } on DioException catch (e) {
+      var msg = handleApiResponse(e.response!.data);
+      return ModelResult(message: msg, status: false);
     }
   }
 
-  Future<bool> Login(Map<String, String> data) async {
+  Future<ModelResult> registerStep1() async {
+    try {
+      final response = await dio.get(
+          'https://attendance-api.pishroatieh.com/api/users/phone-number-confirmation-step-1');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return ModelResult(message: 'موفق', status: true);
+      } else {
+        return ModelResult(message: 'خطا', status: false);
+      }
+    } on DioException catch (e) {
+      var msg = handleApiResponse(e.response!.data);
+      return ModelResult(message: msg, status: false);
+    }
+  }
+
+  Future<ModelResult> registerStep2(smsCode) async {
+    try {
+      final response = await dio.post(
+          'https://attendance-api.pishroatieh.com/api/users/phone-number-confirmation-step-2',
+          data: {'token': smsCode});
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var token = response.data['data'];
+        var tokenResponse = LoginDataToken.fromJson(token);
+        await TokenService().saveTokens(tokenResponse, true);
+
+        return ModelResult(message: 'موفق', status: true);
+      } else {
+        return ModelResult(message: 'خطا', status: false);
+      }
+    } on DioException catch (e) {
+      var msg = handleApiResponse(e.response!.data);
+      return ModelResult(message: msg, status: false);
+    }
+  }
+
+  Future<ModelResult> Login(Map<String, String> data) async {
     try {
       final response = await dio.post(
         'https://attendance-api.pishroatieh.com/api/users/login',
@@ -126,13 +154,46 @@ class ApiService {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         var tokenResponse = LoginResult.fromJson(response.data);
-        await TokenService().saveTokens(tokenResponse.data!);
-        return true;
+        await TokenService().saveTokens(tokenResponse.data!, false);
+        return ModelResult(message: 'موفق', status: true);
       } else {
-        return false;
+        return ModelResult(message: 'خطا', status: false);
       }
-    } catch (e) {
-      return false;
+    } on DioException catch (e) {
+      var msg = handleApiResponse(e.response!.data);
+      return ModelResult(message: msg, status: false);
     }
+  }
+
+  String handleApiResponse(Map<String, dynamic> data) {
+    // پیام اولیه
+    String errorMessage = data['message'] ?? 'خطای نامشخص رخ داده است!';
+
+    try {
+      // خطاهای منطقی
+      if (data['logicalErrors'] != null && data['logicalErrors'] is List) {
+        List logicalErrors = data['logicalErrors'];
+        if (logicalErrors.isNotEmpty) {
+          String logicalErrorMessages = logicalErrors
+              .map((error) => error['message'] ?? 'خطای نامشخص')
+              .join('\n');
+          errorMessage += '\n\nخطاهای منطقی:\n$logicalErrorMessages';
+        }
+      }
+
+      // خطاهای اعتبارسنجی
+      if (data['validationErrors'] != null &&
+          data['validationErrors'] is List) {
+        List validationErrors = data['validationErrors'];
+        if (validationErrors.isNotEmpty) {
+          String validationErrorMessages = validationErrors
+              .map((error) => error['message'] ?? 'خطای اعتبارسنجی نامشخص')
+              .join('\n');
+          errorMessage += '\n\nخطاهای اعتبارسنجی:\n$validationErrorMessages';
+        }
+      }
+    } catch (e) {}
+
+    return errorMessage;
   }
 }

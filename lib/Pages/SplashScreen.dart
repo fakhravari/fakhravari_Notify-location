@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final isLoggedIn = await TokenService().getTokens();
 
-    if (isLoggedIn != null) {
+    if (isLoggedIn != null && isLoggedIn.mobileActive == true) {
       await Get.off(ServiceControlScreen());
     } else {
       await Get.off(LoginPage());

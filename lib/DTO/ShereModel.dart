@@ -1,10 +1,10 @@
-class RegisterUserStep1 {
+class ModelResult {
   String? message;
   bool? status;
 
-  RegisterUserStep1({this.message, this.status});
+  ModelResult({this.message, this.status});
 
-  RegisterUserStep1.fromJson(Map<String, dynamic> json) {
+  ModelResult.fromJson(Map<String, dynamic> json) {
     message = json['message'];
     status = json['status'];
   }

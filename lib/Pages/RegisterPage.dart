@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:fakhravari/ApiService/ApiService.dart';
 import 'package:fakhravari/DTO/CaptchaResponse.dart';
 import 'package:flutter/material.dart';
@@ -16,19 +16,28 @@ class RegisterPage extends StatefulWidget {
 class _RegistrationFormState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final nationalCodeController = TextEditingController();
+  final firstNameController = TextEditingController(text: 'محمدحسین');
+  final lastNameController = TextEditingController(text: 'فخرآوری');
+  final nationalCodeController = TextEditingController(text: '3490061098');
   final birthDateController = TextEditingController(text: '1990-07-25');
-  final phoneNumberController = TextEditingController();
-  final emailController = TextEditingController();
-  final passwordController = TextEditingController();
-  final captchaController = TextEditingController();
-  final captchaSecretController = TextEditingController();
-
+  final phoneNumberController = TextEditingController(text: '09173700916');
+  final emailController = TextEditingController(text: 'fakhravary@gmail.com');
+  final passwordController = TextEditingController(text: '12Fged%67');
+  final captchaController = TextEditingController(text: '');
+  final captchaSecretController = TextEditingController(text: '');
+  final smsController = TextEditingController(text: '');
   bool isLoading = false;
 
   void submitForm() async {
+    smsController.text = '44662';
+    var step2 = await ApiService().registerStep2(smsController.text.trim());
+    if (step2.status == true) {
+      Get.snackbar('موفق', step2.message!);
+    } else {
+      Get.snackbar('خطا', step2.message!);
+    }
+
+    return;
     if (_formKey.currentState!.validate()) {
       setState(() {
         isLoading = true;
@@ -48,27 +57,35 @@ class _RegistrationFormState extends State<RegisterPage> {
 
       var result = await ApiService().registerUser(formData);
 
+      if (result.status == true) {
+        var step1 = await ApiService().registerStep1();
+
+        if (step1.status == true) {
+          if (result.status == true) {
+            Get.snackbar(
+              'موفق',
+              'ثبتنام موفقیت آمیز بود',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.green,
+              colorText: Colors.white,
+            );
+
+            showDialogWithTimer(context);
+          } else {
+            Get.snackbar(
+              'خطا',
+              'یک خطا رخ داده است',
+              snackPosition: SnackPosition.BOTTOM,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
+          }
+        }
+      }
+
       setState(() {
         isLoading = false;
       });
-
-      if (result) {
-        Get.snackbar(
-          'موفق',
-          'ورود موفقیت آمیز بود',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
-          colorText: Colors.white,
-        );
-      } else {
-        Get.snackbar(
-          'خطا',
-          'یک خطا رخ داده است',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
     }
   }
 
@@ -85,6 +102,136 @@ class _RegistrationFormState extends State<RegisterPage> {
     bytes = base64Decode(Captcha!.captchaImage!);
     captchaSecretController.text = Captcha!.captchaSecret!;
     setState(() {});
+  }
+
+  bool isButtonDisabled = true;
+  int remainingTime = 120;
+  Timer? timer;
+  double progressValue = 1.0; // مقدار پیشرفت به صورت درصد (1.0 = 100%)
+  String formattedTime = '02:00'; // زمان باقی‌مانده به فرمت 00:00
+
+  void showDialogWithTimer(BuildContext context) {
+    remainingTime = 120;
+    isButtonDisabled = true;
+    progressValue = 1.0;
+    formattedTime = '02:00';
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // جلوگیری از بسته شدن دیالوگ
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            startTimer(dialogSetState); // شروع تایمر با dialogSetState
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // دکمه بستن در بالای دیالوگ
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // بستن دیالوگ
+                          timer?.cancel(); // توقف تایمر
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      'تایید شماره همراه',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(height: 20),
+                    // ورودی کد تأیید و دکمه ارسال در یک خط
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: smsController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: InputDecoration(
+                              labelText: 'کد تایید',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        ElevatedButton(
+                          onPressed: isButtonDisabled
+                              ? null
+                              : () {
+                                  dialogSetState(() {
+                                    isButtonDisabled =
+                                        true; // غیرفعال کردن دکمه
+                                    remainingTime = 120; // تنظیم زمان دوباره
+                                    progressValue = 1.0; // بازنشانی پیشرفت
+                                    formattedTime =
+                                        '02:00'; // بازنشانی فرمت زمان
+                                  });
+                                  startTimer(dialogSetState); // شروع تایمر جدید
+                                },
+                          child: Text('ارسال'),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    // نمایش زمان باقی‌مانده
+                    if (isButtonDisabled) ...[
+                      Text('زمان باقی‌مانده: $formattedTime'),
+                    ],
+                    SizedBox(height: 20),
+                    // دکمه تأیید کد در زیر دیالوگ
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop(); // بستن دیالوگ
+                        timer?.cancel(); // توقف تایمر
+                      },
+                      child: Text('تأیید کد'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void startTimer(void Function(void Function()) dialogSetState) {
+    // لغو تایمر قبلی (در صورت وجود)
+    timer?.cancel();
+
+    // شروع تایمر جدید
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      if (remainingTime > 0) {
+        dialogSetState(() {
+          remainingTime--;
+          progressValue = remainingTime / 120; // کاهش مقدار پیشرفت
+          formattedTime =
+              '${(remainingTime ~/ 60).toString().padLeft(2, '0')}:${(remainingTime % 60).toString().padLeft(2, '0')}';
+        });
+      } else {
+        t.cancel(); // توقف تایمر
+        dialogSetState(() {
+          isButtonDisabled = false; // فعال کردن دکمه
+          remainingTime = 120; // بازنشانی زمان
+          progressValue = 1.0; // بازنشانی مقدار پیشرفت
+          formattedTime = '02:00'; // بازنشانی فرمت زمان
+        });
+      }
+    });
   }
 
   @override
@@ -271,7 +418,14 @@ class _RegistrationFormState extends State<RegisterPage> {
                           ElevatedButton(
                             onPressed: isLoading ? null : submitForm,
                             child: isLoading
-                                ? CircularProgressIndicator(color: Colors.white)
+                                ? CircularProgressIndicator(
+                                    value: progressValue, // مقدار پیشرفت
+                                    strokeWidth: 6.0, // ضخامت
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.blue), // رنگ پیشرفت
+                                    backgroundColor:
+                                        Colors.grey[300], // رنگ پس‌زمینه
+                                  )
                                 : Text('ارسال'),
                           ),
                         ],

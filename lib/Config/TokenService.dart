@@ -2,9 +2,9 @@ import 'package:fakhravari/DTO/LoginResult.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenService {
-  Future<void> saveTokens(LoginDataToken tokenResponse) async {
+  Future<void> saveTokens(LoginDataToken tokenResponse, bool mobile) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('mobileActive', false);
+    await prefs.setBool('mobileActive', mobile);
     await prefs.setString('token', tokenResponse.token!);
     await prefs.setString('tokenExpiresOn', tokenResponse.tokenExpiresOn!);
     await prefs.setString('refreshToken', tokenResponse.refreshToken!);
