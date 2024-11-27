@@ -64,7 +64,7 @@ class _RegistrationFormState extends State<RegisterPage> {
           showDialogWithTimer(context);
         } else {
           Get.snackbar(
-            'خطا',
+            step1.title!,
             step1.message!,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red,
@@ -73,7 +73,7 @@ class _RegistrationFormState extends State<RegisterPage> {
         }
       } else {
         Get.snackbar(
-          'خطا',
+          result.title!,
           result.message!,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
@@ -202,7 +202,7 @@ class _RegistrationFormState extends State<RegisterPage> {
                           timer?.cancel();
                         } else {
                           Get.snackbar(
-                            'خطا',
+                            step2.title!,
                             step2.message!,
                             snackPosition: SnackPosition.TOP,
                             backgroundColor: Colors.red,

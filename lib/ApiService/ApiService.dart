@@ -104,7 +104,7 @@ class ApiService {
       }
     } on DioException catch (e) {
       var msg = handleApiResponse(e.response!.data);
-      return ModelResult(message: msg, status: false);
+      return ModelResult(message: msg.message, title: msg.title, status: false);
     }
   }
 
@@ -120,7 +120,7 @@ class ApiService {
       }
     } on DioException catch (e) {
       var msg = handleApiResponse(e.response!.data);
-      return ModelResult(message: msg, status: false);
+      return ModelResult(message: msg.message, title: msg.title, status: false);
     }
   }
 
@@ -141,7 +141,7 @@ class ApiService {
       }
     } on DioException catch (e) {
       var msg = handleApiResponse(e.response!.data);
-      return ModelResult(message: msg, status: false);
+      return ModelResult(message: msg.message, title: msg.title, status: false);
     }
   }
 
@@ -161,12 +161,13 @@ class ApiService {
       }
     } on DioException catch (e) {
       var msg = handleApiResponse(e.response!.data);
-      return ModelResult(message: msg, status: false);
+      return ModelResult(message: msg.message, title: msg.title, status: false);
     }
   }
 
-  String handleApiResponse(Map<String, dynamic> data) {
-    String errorMessage = data['message'] ?? 'خطای نامشخص رخ داده است!';
+  ModelResult2 handleApiResponse(Map<String, dynamic> data) {
+    String title = data['message'] ?? 'خطای نامشخص رخ داده است!';
+    String errorMessage = '';
     try {
       // خطاهای منطقی
       if (data['logicalErrors'] != null && data['logicalErrors'] is List) {
@@ -195,6 +196,6 @@ class ApiService {
       }
     } catch (e) {}
 
-    return errorMessage;
+    return ModelResult2(message: errorMessage, title: title);
   }
 }

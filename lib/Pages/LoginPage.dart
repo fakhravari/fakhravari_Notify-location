@@ -42,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
         await Get.off(ServiceControlScreen());
       } else {
         Get.snackbar(
-          'خطا',
+          result.title!,
           result.message!,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
