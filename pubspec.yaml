@@ -18,11 +18,11 @@ dependencies:
   path: ^1.9.0
   geolocator: ^13.0.1
   shared_preferences: ^2.3.2
-  flutter_local_notifications: ^17.2.4
+  flutter_local_notifications: ^18.0.1
   get: ^4.6.6
   device_info_plus: ^11.1.1
   unique_identifier: ^0.4.0
-  uni_links3: ^0.5.3
+  uni_links: ^0.5.1
   url_launcher: ^6.3.1
 
 dev_dependencies:
