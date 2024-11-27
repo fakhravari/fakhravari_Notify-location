@@ -24,21 +24,18 @@ class LoginDataToken {
   String? tokenExpiresOn;
   String? refreshToken;
   String? refreshTokenExpiresOn;
-  bool? mobileActive;
 
   LoginDataToken(
       {this.token,
       this.tokenExpiresOn,
       this.refreshToken,
-      this.refreshTokenExpiresOn,
-      this.mobileActive});
+      this.refreshTokenExpiresOn});
 
   LoginDataToken.fromJson(Map<String, dynamic> json) {
     token = json['token'];
     tokenExpiresOn = json['tokenExpiresOn'];
     refreshToken = json['refreshToken'];
     refreshTokenExpiresOn = json['refreshTokenExpiresOn'];
-    mobileActive = json['mobileActive'] ?? false;
   }
 
   Map<String, dynamic> toJson() {
@@ -47,7 +44,6 @@ class LoginDataToken {
     data['tokenExpiresOn'] = this.tokenExpiresOn;
     data['refreshToken'] = this.refreshToken;
     data['refreshTokenExpiresOn'] = this.refreshTokenExpiresOn;
-    data['mobileActive'] = this.mobileActive ?? false;
     return data;
   }
 }

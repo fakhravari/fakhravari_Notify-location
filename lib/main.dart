@@ -25,7 +25,7 @@ Future<void> OpenDeteils(Uri Url) async {
   bool isError = true;
 
   final isLoggedIn = await TokenService().getTokens();
-  if (isLoggedIn == null || isLoggedIn.mobileActive == false) {
+  if (isLoggedIn == null || ((await Tools.GetstatusLoginTaid()) == false)) {
     isError = true;
   }
   if (Url.queryParameters['timer'] == null ||

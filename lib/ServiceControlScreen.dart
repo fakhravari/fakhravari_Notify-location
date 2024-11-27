@@ -29,8 +29,7 @@ class ServiceController extends GetxController {
 
   Future<void> checkServiceStatus() async {
     final isLoggedIn = await TokenService().getTokens();
-    var isStart = await Tools.GetstatusService();
-    if (isLoggedIn != null && isLoggedIn.mobileActive == true && isStart) {
+    if (isLoggedIn != null && ((await Tools.GetstatusLoginTaid()) == true)) {
       bool running = await FlutterBackgroundService().isRunning();
       if (running == false) {
         await FlutterBackgroundService().startService();

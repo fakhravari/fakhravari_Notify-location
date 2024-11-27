@@ -14,7 +14,6 @@ class TokenService {
 
   Future<LoginDataToken?> getTokens() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool mobileActive = prefs.getBool('mobileActive') ?? false;
     String? token = prefs.getString('token');
     String? tokenExpiresOn = prefs.getString('tokenExpiresOn');
     String? refreshToken = prefs.getString('refreshToken');
@@ -28,8 +27,7 @@ class TokenService {
           token: token,
           tokenExpiresOn: tokenExpiresOn,
           refreshToken: refreshToken,
-          refreshTokenExpiresOn: refreshTokenExpiresOn,
-          mobileActive: mobileActive);
+          refreshTokenExpiresOn: refreshTokenExpiresOn);
     }
     return null;
   }

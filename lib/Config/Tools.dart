@@ -73,4 +73,15 @@ class Tools {
 
     return prefs.getInt('timer') ?? 10;
   }
+
+  static Future<void> statusLoginTaid(bool chek) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('statusLoginTaid', chek);
+  }
+
+  static Future<bool> GetstatusLoginTaid() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    return prefs.getBool('statusLoginTaid') ?? false;
+  }
 }

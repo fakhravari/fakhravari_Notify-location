@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:fakhravari/Config/TokenService.dart';
+import 'package:fakhravari/Config/Tools.dart';
 import 'package:fakhravari/ServiceControlScreen.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final isLoggedIn = await TokenService().getTokens();
 
-    if (isLoggedIn != null && isLoggedIn.mobileActive == true) {
+    if (isLoggedIn != null && ((await Tools.GetstatusLoginTaid()) == true)) {
       await Get.off(ServiceControlScreen());
     } else {
       await Get.off(LoginPage());
